@@ -1,14 +1,16 @@
+use futures::stream::StreamExt;
+use std::collections::BTreeSet;
+use uuid::Uuid;
+
 use btleplug::api::{
-    Central, CentralEvent, CharPropFlags, Characteristic, Manager as _, Peripheral,
+    Central, CentralEvent, CharPropFlags, Characteristic, Manager as _, Peripheral as _,
     PeripheralProperties, ScanFilter,
 };
-use btleplug::platform::{Adapter, Manager};
-use futures::stream::StreamExt;
-use uuid::Uuid;
-use std::collections::BTreeSet;
+use btleplug::platform::{Adapter, Manager, Peripheral};
+use tokio::sync::mpsc;
 
-use crate::reading::Reading;
 use crate::config;
+use crate::reading::{Reading, ReadingFn};
 
 fn check_name(
     peripheral_properties: Option<PeripheralProperties>,
@@ -16,10 +18,8 @@ fn check_name(
 ) -> (bool, String) {
     let name = peripheral_properties
         .and_then(|p| p.local_name)
-        .map(|local_name| format!("Name: {local_name}"))
         .unwrap_or_default();
-    let is_interessting = name.contains(comparison);
-    (is_interessting, name)
+    (name.contains(comparison), name)
 }
 
 fn find_characteristic(
@@ -40,16 +40,41 @@ fn select_adapter(adapter_list: Vec<Adapter>) -> Adapter {
     adapter_list[0].clone()
 }
 
+async fn read_device_loop(
+    characteristic: Characteristic,
+    name: String,
+    peripheral: &Peripheral,
+    cloned_sender: mpsc::UnboundedSender<Reading>,
+    reading_fn: &'static ReadingFn,
+) -> Result<(), Box<dyn std::error::Error>> {
+    peripheral.subscribe(&characteristic).await?;
+    let mut notification_stream = peripheral.notifications().await?;
+    while let Some(data) = notification_stream.next().await {
+        match reading_fn(data.value, name.clone()) {
+            Ok(r) => match cloned_sender.send(r) {
+                Ok(_) => {}
+                Err(_) => {
+                    println!("ERROR sending data for device")
+                }
+            },
+            Err(_) => {
+                println!("error reading data from {}", name)
+            }
+        }
+    }
+    Ok(())
+}
+
 async fn poll_devices(
     adapter: Adapter,
-    device_info: config::DeviceInfo,
-    reading_fn: &'static (dyn Fn(Vec<u8>) -> Result<Reading, Box<dyn std::error::Error>> + Sync),
+    tx: mpsc::UnboundedSender<Reading>,
+    device_info: config::BluetoothConfig,
+    reading_fn: &'static ReadingFn,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut events = adapter.events().await?;
     //let _ = adapter.stop_scan().await;
     //return Ok(());
     adapter.start_scan(ScanFilter::default()).await?;
-    println!("START SCANNING");
     while let Some(event) = events.next().await {
         match event {
             CentralEvent::DeviceDiscovered(id) => {
@@ -62,57 +87,24 @@ async fn poll_devices(
                         let _ = peripheral.connect().await.unwrap_or_default();
                     }
 
-                    println!("{} IS CONNECTED", name);
                     if peripheral.is_connected().await.unwrap_or_default() {
                         let _ = peripheral.discover_services().await;
-
-                        match find_characteristic(
+                        if let Some(c) = find_characteristic(
                             peripheral.characteristics(),
                             device_info.service_uuid,
                         ) {
-                            Some(c) => {
-                                tokio::spawn(async move {
-                                    match peripheral.subscribe(&c).await {
-                                        Ok(_) => {
-                                            let notification_stream_result =
-                                                peripheral.notifications().await;
-                                            if let Ok(mut notification_stream) =
-                                                notification_stream_result
-                                            {
-                                                while let Some(data) =
-                                                    notification_stream.next().await
-                                                {
-                                                    match reading_fn(data.value) {
-                                                        Ok(Reading {
-                                                            temperature,
-                                                            humidity,
-                                                        }) => {
-                                                            let t_f: f32 = <u16 as Into<f32>>::into(
-                                                                temperature,
-                                                            ) / 10_f32;
-                                                            println!(
-                                                                "{} {} {}",
-                                                                name, t_f, humidity
-                                                            );
-                                                        }
-
-                                                        Err(_) => {
-                                                            println!(
-                                                                "error reading data from {}",
-                                                                name
-                                                            )
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        _ => {}
-                                    }
-
-                                    let _ = peripheral.disconnect().await;
-                                });
-                            }
-                            None => {}
+                            let cloned_sender = tx.clone();
+                            tokio::spawn(async move {
+                                let _ = read_device_loop(
+                                    c,
+                                    name,
+                                    &peripheral,
+                                    cloned_sender,
+                                    reading_fn,
+                                )
+                                .await;
+                                let _ = peripheral.disconnect().await;
+                            });
                         }
                     }
                 }
@@ -124,8 +116,9 @@ async fn poll_devices(
 }
 
 pub async fn start_bluetooth_thread(
-    device_info: config::DeviceInfo,
-    reading_fn: &'static (dyn Fn(Vec<u8>) -> Result<Reading, Box<dyn std::error::Error>> + Sync),
+    device_info: config::BluetoothConfig,
+    tx: mpsc::UnboundedSender<Reading>,
+    reading_fn: &'static ReadingFn,
 ) -> Result<tokio::task::JoinHandle<()>, Box<dyn std::error::Error>> {
     let manager = Manager::new().await?;
     let adapter_list = manager.adapters().await?;
@@ -133,7 +126,7 @@ pub async fn start_bluetooth_thread(
     let adapter = select_adapter(adapter_list);
     let _ = adapter.stop_scan().await;
     let task = tokio::spawn(async move {
-        let _ = poll_devices(adapter, device_info.clone(), reading_fn).await;
+        let _ = poll_devices(adapter, tx, device_info.clone(), reading_fn).await;
     });
     Ok(task)
 }
