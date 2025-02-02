@@ -1,13 +1,5 @@
-
-use thermo_sensor::parse_config;
-
-use thermo_sensor::start_bluetooth_thread;
-
-use thermo_sensor::Reading;
-
-use thermo_sensor::start_database_thread;
-
 use chrono::Utc;
+use thermo_sensor::{parse_config, start_bluetooth_thread, start_database_thread, Reading};
 use tokio::sync::mpsc;
 
 fn extract_temp_and_humidity(
