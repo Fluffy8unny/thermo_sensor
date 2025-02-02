@@ -1,16 +1,13 @@
-mod config;
-use config::parse_config;
 
-mod bluetooth;
-use bluetooth::start_bluetooth_thread;
+use thermo_sensor::parse_config;
 
-mod reading;
-use reading::Reading;
+use thermo_sensor::start_bluetooth_thread;
 
-mod database;
-use database::start_database_thread;
+use thermo_sensor::Reading;
 
-use std::time::SystemTime;
+use thermo_sensor::start_database_thread;
+
+use chrono::Utc;
 use tokio::sync::mpsc;
 
 fn extract_temp_and_humidity(
@@ -19,7 +16,7 @@ fn extract_temp_and_humidity(
 ) -> Result<Reading, Box<dyn std::error::Error>> {
     let t = u16::from_le_bytes(data[3..5].try_into()?);
     let h = data[5];
-    let now = SystemTime::now();
+    let now = Utc::now();
     Ok(Reading {
         temperature: t,
         humidity: h,
@@ -38,7 +35,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .await
         .unwrap();
     let database_task = start_database_thread(config.db_config, rx).await.unwrap();
-    let _ = adapter_tasks.await; //loop is running
-    let _ = database_task.await;
+    adapter_tasks.await?; //loop is running
+    database_task.await?;
     Ok(())
 }

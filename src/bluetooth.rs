@@ -122,7 +122,9 @@ pub async fn start_bluetooth_thread(
 ) -> Result<tokio::task::JoinHandle<()>, Box<dyn std::error::Error>> {
     let manager = Manager::new().await?;
     let adapter_list = manager.adapters().await?;
-
+    if adapter_list.len() == 0{
+        return Err("No adapters found.".into());
+    }
     let adapter = select_adapter(adapter_list);
     let _ = adapter.stop_scan().await;
     let task = tokio::spawn(async move {
