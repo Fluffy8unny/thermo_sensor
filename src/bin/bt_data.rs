@@ -1,5 +1,5 @@
 use chrono::Utc;
-use thermo_sensor::{parse_config, start_bluetooth_thread, start_database_thread, Reading};
+use thermo_sensor::{parse_config, start_bluetooth_thread, start_database_thread, Reading,DeviceName};
 use tokio::sync::mpsc;
 
 fn extract_temp_and_humidity(
@@ -12,7 +12,7 @@ fn extract_temp_and_humidity(
     Ok(Reading {
         temperature: t,
         humidity: h,
-        device_name: name,
+        device_name: DeviceName{name : name.to_string(), nickname: None},
         time_stamp: now,
     })
 }

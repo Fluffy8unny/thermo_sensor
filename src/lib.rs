@@ -2,7 +2,7 @@ mod bluetooth;
 pub use bluetooth::start_bluetooth_thread;
 
 mod reading;
-pub use reading::Reading;
+pub use reading::{Reading,DeviceName};
 
 mod database;
 pub use database::{
