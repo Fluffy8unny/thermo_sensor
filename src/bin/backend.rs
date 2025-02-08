@@ -35,7 +35,7 @@ async fn set_nickname(params : web::Path<(String,String)>, data: web::Data<AppSt
     }
 }
 
-#[get("/get_device/{name}/{date}")]
+#[get("/device/{name}/{date}")]
 async fn device_by_name(params : web::Path<(String,String)>,  data: web::Data<AppState>) -> impl Responder {
     let (device_name,time_string) = params.into_inner();
     let time_from= DateTime::parse_from_rfc3339(&time_string).unwrap();

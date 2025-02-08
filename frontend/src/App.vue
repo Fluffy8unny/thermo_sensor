@@ -1,10 +1,9 @@
 <template>
   <div class="wide" style="display: flex">
-    <ThermoGauge
-      v-for="device in devices"
-      :key="device.device_name"
-      :device="device"
-    />
+    <div v-for="device in devices" :key="device.device_name.name">
+      <ThermoGauge :device="device" />
+      <ThermoNameSetter :device="device" />
+    </div>
   </div>
   <ThermoPlot />
 </template>
@@ -15,6 +14,8 @@ import { useIntervalFn } from "@vueuse/core";
 
 import ThermoGauge from "./components/ThermoGauge.vue";
 import ThermoPlot from "./components/ThermoPlot.vue";
+import ThermoNameSetter from "./components/ThermoNameSetter.vue";
+
 import ThermoService from ".//services/thermo.service";
 import Reading from "./interfaces/device.interface";
 
@@ -22,6 +23,7 @@ export default defineComponent({
   name: "App",
   components: {
     ThermoGauge,
+    ThermoNameSetter,
     ThermoPlot,
   },
   setup(props, ctx) {

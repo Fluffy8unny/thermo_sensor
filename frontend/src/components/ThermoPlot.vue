@@ -33,13 +33,18 @@ const get_device_readings = async (start_date: Date) => {
   return readings;
 };
 
-const define_plot_ref = (name: string) => {
+const define_plot_ref = (name: string, axis_title: string) => {
   return ref<Partial<Plotly.Layout>>({
     height: 500,
-    title: name,
+    title: { text: name },
+
+    yaxis: {
+      title: {
+        text: axis_title,
+      },
+    },
   });
 };
-
 export default defineComponent({
   components: { VuePlotly: VuePlotly, TimeSelection: TimeSelection },
   name: "ThermoPlot",
@@ -50,8 +55,8 @@ export default defineComponent({
     const plot_temp = ref<typeof VuePlotly>();
     const plot_humidity = ref<typeof VuePlotly>();
 
-    const layout_temp = define_plot_ref("temperature");
-    const layout_humidity = define_plot_ref("humidity");
+    const layout_temp = define_plot_ref("temperature", "°C");
+    const layout_humidity = define_plot_ref("humidity", "%");
 
     const data_temp = ref<Plotly.Data[]>([]);
     const data_humidity = ref<Plotly.Data[]>([]);

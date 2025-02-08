@@ -33,10 +33,11 @@ fn insert_into_table(
     reading: Reading,
 ) -> Result<(), Box<dyn std::error::Error>> {
     conn.execute(
-        "insert or ignore into get_all_devices
+        "insert or ignore into devices
               (id,name,nickname) values (NULL,?1,NULL)",
         (reading.device_name.name.clone(),),
     )?;
+
     conn.execute(
         "insert into readings
              (id,time_stamp,device_id,temperature,humidity) values (NULL,?1, (select id from devices where name=?2) , ?3, ?4)",
@@ -91,8 +92,8 @@ pub fn get_all_devices(
     let time_string = convert_date_time(time_limit);
     let mut stmt = conn.prepare(
         "select distinct d.name,d.nickname
-                           from readings r inner join devices d on r.device_id = d.id
-                           where r.time_stamp > datetime(?1)",
+               from readings r inner join devices d on r.device_id = d.id
+               where r.time_stamp > datetime(?1)",
     )?;
     let reading_iter = stmt.query_map([time_string], |row| {
         Ok(DeviceName {
