@@ -8,41 +8,39 @@ struct AppState {
     config: Config,
 }
 
-#[get("/current_reading")]
-async fn newest_reading(data: web::Data<AppState>) -> impl Responder {
-    let time_from= DateTime::parse_from_str("2025-02-02 20:25:22.440363109+00:00", "%F %T%.f%:z").unwrap();
+#[get("/current_reading/{date}")]
+async fn newest_reading(date : web::Path<String>, data: web::Data<AppState>) -> impl Responder {
+    let time_from= DateTime::parse_from_rfc3339(date.as_str()).unwrap();
     let getdata =
         get_newest_readings(data.config.db_config.clone(), time_from.into())
             .unwrap(); //todo Error handling
     web::Json(getdata)
 }
 
-#[get("/all_device_names")]
-async fn all_devices(data: web::Data<AppState>) -> impl Responder {
-    let time_from= DateTime::parse_from_str("2025-02-02 20:25:22.440363109+00:00", "%F %T%.f%:z").unwrap();
+#[get("/all_device_names/{date}")]
+async fn all_devices(date : web::Path<String>, data: web::Data<AppState>) -> impl Responder {
+    let time_from= DateTime::parse_from_rfc3339(date.as_str()).unwrap();
     let getdata =
         get_all_devices(data.config.db_config.clone(), time_from.into())
             .unwrap(); //todo error handling
     web::Json(getdata)
 }
 
-#[post("/nickname/{name}")]
-async fn set_nickname(name: web::Path<String>, nickname: web::Path<String>, data: web::Data<AppState>) -> HttpResponse {
-    let device_name = name.as_str();
-    let device_nickname = nickname.as_str();
-
-    match update_nickname(data.config.db_config.clone(),device_name, device_nickname){
+#[post("/nickname/{name}/{nickname}")]
+async fn set_nickname(params : web::Path<(String,String)>, data: web::Data<AppState>) -> HttpResponse {
+    let (name,nickname) = params.into_inner();
+    match update_nickname(data.config.db_config.clone(),&name, &nickname){
         Ok(_)=> HttpResponse::Ok().finish(),
         Err(err)=>HttpResponse::from_error(err),
     }
 }
 
-#[get("/get_device/{name}")]
-async fn device_by_name(name: web::Path<String>, data: web::Data<AppState>) -> impl Responder {
-    let device_name = name.as_str();
-    let time_from= DateTime::parse_from_str("2025-02-02 20:25:22.440363109+00:00", "%F %T%.f%:z").unwrap();
+#[get("/get_device/{name}/{date}")]
+async fn device_by_name(params : web::Path<(String,String)>,  data: web::Data<AppState>) -> impl Responder {
+    let (device_name,time_string) = params.into_inner();
+    let time_from= DateTime::parse_from_rfc3339(&time_string).unwrap();
     let getdata =
-        get_all_readings_for_device(data.config.db_config.clone(), device_name, time_from.into())
+        get_all_readings_for_device(data.config.db_config.clone(), &device_name, time_from.into())
             .unwrap(); //todo error handling
     web::Json(getdata)
 }

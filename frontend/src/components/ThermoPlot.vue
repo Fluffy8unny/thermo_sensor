@@ -1,4 +1,5 @@
 <template>
+  <TimeSelection ref="date_ref" />
   <div class="wide">
     <VuePlotly ref="plot_temp" :data="data_humidity" :layout="layout_temp" />
   </div>
@@ -12,7 +13,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, h } from "vue";
+import { defineComponent, ref, Ref, onMounted, h } from "vue";
+import TimeSelection from "./plot/TimeSelection.vue";
 import ThermoService from "../services/thermo.service";
 import Reading from "../interfaces/device.interface";
 
@@ -20,30 +22,34 @@ import Plotly from "plotly.js";
 import VuePlotly from "vue3-plotly-ts";
 import { useIntervalFn } from "@vueuse/core";
 
-const get_device_readings = async () => {
-  const device_result = await ThermoService.get_devices();
+const get_device_readings = async (start_date: Date) => {
+  const device_result = await ThermoService.get_devices(start_date);
   const readings = device_result.map(async (device) => {
     return {
-      data: await ThermoService.get_all_readings_for_device(device),
+      data: await ThermoService.get_all_readings_for_device(device, start_date),
       name: device.name,
     };
   });
   return readings;
 };
 
+const define_plot_ref = (name: string) => {
+  return ref<Partial<Plotly.Layout>>({
+    height: 500,
+    title: name,
+  });
+};
+
 export default defineComponent({
-  components: { VuePlotly: VuePlotly },
+  components: { VuePlotly: VuePlotly, TimeSelection: TimeSelection },
   name: "ThermoPlot",
   props: {},
   setup(props, ctx) {
+    const ref_to_time_selector = ref();
+
     const plot_temp = ref<typeof VuePlotly>();
     const plot_humidity = ref<typeof VuePlotly>();
-    const define_plot_ref = (name: string) => {
-      return ref<Partial<Plotly.Layout>>({
-        height: 500,
-        title: name,
-      });
-    };
+
     const layout_temp = define_plot_ref("temperature");
     const layout_humidity = define_plot_ref("humidity");
 
@@ -53,7 +59,9 @@ export default defineComponent({
     const update_plot = async () => {
       data_humidity.value = [];
       data_temp.value = [];
-      for (const reading_promise of await get_device_readings()) {
+      for (const reading_promise of await get_device_readings(
+        ref_to_time_selector.value.date_ref
+      )) {
         const reading = await reading_promise;
         const temperature_readings = reading.data.map(
           (r: Reading) => r.temperature / 10 + Math.random()
@@ -82,6 +90,7 @@ export default defineComponent({
         data_temp.value.push(generate_data(temperature_readings, reading.name));
       }
     };
+
     onMounted(async () => {
       update_plot();
       const { pause, resume, isActive } = useIntervalFn(async () => {
@@ -96,6 +105,7 @@ export default defineComponent({
       layout_humidity,
       plot_temp,
       plot_humidity,
+      date_ref: ref_to_time_selector,
     };
   },
 });

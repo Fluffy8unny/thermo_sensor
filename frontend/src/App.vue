@@ -28,7 +28,11 @@ export default defineComponent({
     const devices = ref<Reading[]>([]);
     onMounted(async () => {
       const { pause, resume, isActive } = useIntervalFn(async () => {
-        const devices_result = await ThermoService.get_newest_readings();
+        let default_date = new Date();
+        default_date.setDate(default_date.getDate() - 7);
+        const devices_result = await ThermoService.get_newest_readings(
+          default_date
+        );
         devices.value = devices_result;
       }, 1000);
     });
