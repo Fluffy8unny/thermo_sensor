@@ -11,12 +11,12 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
+import { useIntervalFn } from "@vueuse/core";
 
 import ThermoGauge from "./components/ThermoGauge.vue";
 import ThermoPlot from "./components/ThermoPlot.vue";
-import ThermoService from ".//services/thermo";
+import ThermoService from ".//services/thermo.service";
 import Reading from "./interfaces/device.interface";
-import VuePlotly from "vue3-plotly-ts";
 
 export default defineComponent({
   name: "App",
@@ -27,8 +27,10 @@ export default defineComponent({
   setup(props, ctx) {
     const devices = ref<Reading[]>([]);
     onMounted(async () => {
-      const devices_result = await ThermoService.get_newest_readings();
-      devices.value = devices_result;
+      const { pause, resume, isActive } = useIntervalFn(async () => {
+        const devices_result = await ThermoService.get_newest_readings();
+        devices.value = devices_result;
+      }, 1000);
     });
     return { devices };
   },
