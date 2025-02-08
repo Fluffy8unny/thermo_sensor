@@ -12,6 +12,8 @@ pub struct Config{
 #[derive(Deserialize,Debug,Clone)]
 pub struct DatabaseConfig{
     pub file_name : String,
+    pub backend_ip : String,
+    pub backend_port: u16,
 }
 
 #[derive(Deserialize,Debug,Clone)]

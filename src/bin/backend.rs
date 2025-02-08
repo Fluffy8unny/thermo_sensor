@@ -1,7 +1,7 @@
-use actix_web::{get, web, App, HttpServer, Responder};
-use actix_cors::{Cors};
-use chrono::{DateTime};
-use thermo_sensor::{get_all_devices, get_all_readings_for_device, get_newest_readings};
+use actix_web::{get, post, web, App, HttpServer, Responder, HttpResponse};
+use actix_cors::Cors;
+use chrono::DateTime;
+use thermo_sensor::{get_all_devices, get_all_readings_for_device, get_newest_readings,update_nickname};
 use thermo_sensor::{parse_config, Config};
 
 struct AppState {
@@ -26,6 +26,17 @@ async fn all_devices(data: web::Data<AppState>) -> impl Responder {
     web::Json(getdata)
 }
 
+#[post("/nickname/{name}")]
+async fn set_nickname(name: web::Path<String>, nickname: web::Path<String>, data: web::Data<AppState>) -> HttpResponse {
+    let device_name = name.as_str();
+    let device_nickname = nickname.as_str();
+
+    match update_nickname(data.config.db_config.clone(),device_name, device_nickname){
+        Ok(_)=> HttpResponse::Ok().finish(),
+        Err(err)=>HttpResponse::from_error(err),
+    }
+}
+
 #[get("/get_device/{name}")]
 async fn device_by_name(name: web::Path<String>, data: web::Data<AppState>) -> impl Responder {
     let device_name = name.as_str();
@@ -39,17 +50,19 @@ async fn device_by_name(name: web::Path<String>, data: web::Data<AppState>) -> i
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let file_name = "config.toml";
+    let config = parse_config(file_name).unwrap();
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(AppState {
-                config: parse_config(file_name).unwrap(),
+                config: parse_config(&file_name).unwrap()
             }))
             .service(newest_reading)
             .service(all_devices)
             .service(device_by_name)
+            .service(set_nickname)
             .wrap(Cors::permissive())
     })
-    .bind(("127.0.0.1", 8081))?
+    .bind((config.db_config.backend_ip, config.db_config.backend_port))?
     .run()
     .await
 }

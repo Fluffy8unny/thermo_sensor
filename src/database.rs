@@ -33,18 +33,34 @@ fn insert_into_table(
     reading: Reading,
 ) -> Result<(), Box<dyn std::error::Error>> {
     conn.execute(
-        "insert or ignore into devices  (id,name,nickname) values (NULL,?1,NULL)",
+        "insert or ignore into get_all_devices
+              (id,name,nickname) values (NULL,?1,NULL)",
         (reading.device_name.name.clone(),),
     )?;
     conn.execute(
-        "insert into readings (id,time_stamp,device_id,temperature,humidity) values (NULL,?1, 
-        (select id from devices where name=?2) , ?3, ?4)",
+        "insert into readings
+             (id,time_stamp,device_id,temperature,humidity) values (NULL,?1, (select id from devices where name=?2) , ?3, ?4)",
         (
             reading.time_stamp,
             reading.device_name.name.clone(),
             reading.temperature,
             reading.humidity,
         ),
+    )?;
+    Ok(())
+}
+
+pub fn update_nickname(
+    config: config::DatabaseConfig,
+    device_name: &str,
+    device_nickname: &str,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let conn = Connection::open(config.file_name)?;
+    conn.execute(
+        "update devices 
+                       set nickname =?1
+                       where name = ?2",
+        [device_nickname, device_name],
     )?;
     Ok(())
 }
