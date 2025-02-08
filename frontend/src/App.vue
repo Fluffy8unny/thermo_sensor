@@ -17,7 +17,7 @@ import ThermoPlot from "./components/ThermoPlot.vue";
 import ThermoNameSetter from "./components/ThermoNameSetter.vue";
 
 import ThermoService from ".//services/thermo.service";
-import Reading from "./interfaces/device.interface";
+import { Reading } from "./interfaces/device.interface";
 
 export default defineComponent({
   name: "App",

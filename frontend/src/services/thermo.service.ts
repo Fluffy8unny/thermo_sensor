@@ -1,6 +1,5 @@
 import axios from "axios";
-import Device from "@/interfaces/device.interface";
-import Reading from "@/interfaces/device.interface";
+import { Reading, Device } from "@/interfaces/device.interface";
 
 const backend_url = "http://localhost:8081";
 

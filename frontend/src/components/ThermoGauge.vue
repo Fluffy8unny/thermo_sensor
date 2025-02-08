@@ -1,25 +1,49 @@
 <template>
   <div>
-    <h1>{{ device.device_name.name }}</h1>
-    <h2 v-if="device.device_name.nickname !== null">
+    <h1 v-if="device.device_name.nickname !== null">
       {{ device.device_name.nickname }}
-    </h2>
-    <h2 v-else>no description</h2>
-    <h2>{{ device.temperature / 10 }}°C</h2>
-    <h2>{{ device.humidity }}%</h2>
+    </h1>
+    <h1 v-else>no description</h1>
+    <h2>{{ device.device_name.name }}</h2>
     <h2>
-      last update: {{ (Date.now() - new Date(device.time_stamp)) / 1000 }} s ago
+      last update:
+      {{
+        (Date.now() - new Date((device as Reading).time_stamp).getTime()) / 1000
+      }}
+      s ago
     </h2>
+    <Thermometer :value="device.temperature / 10" :settings="therm_settings" />
+    <Thermometer :value="device.humidity" :settings="humidity_settings" />
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
-import Reading from "../interfaces/device.interface";
+import { Reading } from "../interfaces/device.interface";
+import ThermometerDisplay from "./gauge/Thermometer.vue";
+
 export default defineComponent({
   name: "ThermoGauge",
+  components: { Thermometer: ThermometerDisplay },
   props: {
-    device: Reading,
+    device: Object,
+  },
+  setup(props, ctx) {
+    const therm_settings = {
+      min_val: 15,
+      max_val: 35,
+      unit: "°C",
+      color_bulb: "#32de84",
+      color_top: "#ff0000",
+    };
+    const humidity_settings = {
+      min_val: 0,
+      max_val: 100,
+      unit: "%",
+      color_bulb: "#7CB9E8",
+      color_top: "#7CB9E8",
+    };
+    return { therm_settings, humidity_settings };
   },
 });
 </script>

@@ -13,6 +13,8 @@
     "core-js": "^3.8.3",
     "plotly.js": "^3.0.0",
     "plotly.js-dist-min": "^2.35.3",
+    "sass": "^1.84.0",
+    "sass-loader": "^16.0.4",
     "vue": "^3.2.13",
     "vue3-plotly-ts": "^1.0.4"
   },
