@@ -1,5 +1,5 @@
 <template>
-  <v-card class="my-4 mx-auto" variant="elevated" max-width="35em">
+  <v-card class="my-4 mx-auto" variant="elevated">
     <v-row align="center" no-gutters>
       <v-col class="text-h4">
         <v-card-item
@@ -8,7 +8,7 @@
         >
           <template v-slot:subtitle>
             <v-icon class="me-1 pb-1" icon="mdi-update" size="18"></v-icon>
-            last update:
+            updated:
             {{
               (Date.now() -
                 new Date((device as Reading).time_stamp).getTime()) /
@@ -28,7 +28,6 @@
         <ThermoGauge :device="device" />
       </v-row>
     </v-card-text>
-    <v-card-text> </v-card-text>
   </v-card>
 </template>
 

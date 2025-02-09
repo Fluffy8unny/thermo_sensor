@@ -1,12 +1,18 @@
 <template>
-  <v-container>
+  <v-card class="my-2">
+    <v-card-item
+      class="text-h4"
+      title="Recent readings"
+      prepend-icon="mdi-chart-line"
+    >
+    </v-card-item>
     <v-row>
       <v-col>
         <VuePlotly ref="plot_temp" :data="data_temp" :layout="layout_temp" />
       </v-col>
     </v-row>
     <v-row>
-      <v-col class="d-flex justify-center">
+      <v-col class="d-flex justify-center my-2">
         <ModeSelection @click="update_plot" ref="mode_ref" class="mx-2" />
         <TimeSelection
           @click="update_plot"
@@ -14,15 +20,16 @@
           class="mx-2"
           @redraw="update_plot"
         />
-        <v-btn
-          variant="plain"
-          size="large"
-          icon="mdi-refresh"
-          @click="update_plot"
-        ></v-btn>
+        <v-btn-toggle
+          color="divided"
+          v-model="impossible_ref"
+          variant="outlined"
+        >
+          <v-btn size="large" icon="mdi-refresh" @click="update_plot"></v-btn>
+        </v-btn-toggle>
       </v-col>
     </v-row>
-  </v-container>
+  </v-card>
 </template>
 <script lang="ts">
 import { defineComponent, ref, Ref, onMounted, watch } from "vue";
@@ -50,11 +57,18 @@ const define_plot_ref = () => {
   return ref<Partial<Plotly.Layout>>({
     paper_bgcolor: "rgba(0,0,0,0)",
     plot_bgcolor: "rgba(0,0,0,0)",
-    height: 650,
+    height: 450,
     font: {
       family: "Courier New, monospace",
       size: 14,
       color: "#fff",
+    },
+    margin: {
+      l: 100,
+      r: 100,
+      b: 80,
+      t: 20,
+      pad: 4,
     },
     legend: {
       x: 1.0,
@@ -105,7 +119,7 @@ export default defineComponent({
   setup(props, ctx) {
     const ref_to_time_selector = ref();
     const ref_to_mode_selector = ref();
-
+    const impossible_ref = 27;
     const plot_temp = ref<typeof VuePlotly>();
 
     const layout_temp = define_plot_ref();
@@ -172,6 +186,7 @@ export default defineComponent({
       plot_temp,
       date_ref: ref_to_time_selector,
       mode_ref: ref_to_mode_selector,
+      impossible_ref,
       update_plot,
     };
   },

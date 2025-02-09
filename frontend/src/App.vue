@@ -2,13 +2,11 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-row> Devices </v-row>
         <v-row>
           <v-col v-for="device in devices" :key="device.device_name.name">
             <ThermoCard :device="device" />
           </v-col>
         </v-row>
-        <v-row> Readings </v-row>
         <ThermoPlot />
       </v-container>
     </v-main>

@@ -20,7 +20,7 @@
     ></v-btn>
   </v-row>
   <v-row v-else>
-    <v-col class="my-2 text-h4" cols="9"
+    <v-col class="my-2 text-h5" cols="9"
       >{{
         device?.device_name.nickname ? device.device_name.nickname : "no name"
       }}

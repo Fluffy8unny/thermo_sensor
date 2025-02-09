@@ -1,5 +1,5 @@
 <template>
-  <v-btn-toggle v-model="time_ref">
+  <v-btn-toggle v-model="time_ref" variant="outlined">
     <v-btn value="1" @click="setTimeOffset(1)">1 day</v-btn>
     <v-btn value="7" @click="setTimeOffset(7)">1 week</v-btn>
     <v-btn value="30" @click="setTimeOffset(30)">1 month</v-btn>
