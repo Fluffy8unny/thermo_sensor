@@ -1,11 +1,11 @@
 <template>
-  <Thermometer :value="device.temperature / 10" :settings="therm_settings" />
-  <Thermometer :value="device.humidity" :settings="humidity_settings" />
+  <Thermometer :value="device?.temperature / 10" :settings="therm_settings" />
+  <Thermometer :value="device?.humidity" :settings="humidity_settings" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Reading } from "../interfaces/device.interface";
+import { Reading } from "../../interfaces/device.interface";
 import ThermometerDisplay from "./Thermometer.vue";
 
 export default defineComponent({

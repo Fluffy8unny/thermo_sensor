@@ -1,9 +1,9 @@
 <template>
-  <v-card class="mx-auto" variant="elevated" max-width="35em">
+  <v-card class="my-4 mx-auto" variant="elevated" max-width="35em">
     <v-row align="center" no-gutters>
       <v-col class="text-h4">
         <v-card-item
-          :title="device.device_name.name"
+          :title="device?.device_name.name"
           prepend-icon="mdi-thermometer"
         >
           <template v-slot:subtitle>

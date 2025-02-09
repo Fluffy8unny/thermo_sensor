@@ -45,7 +45,7 @@ const get_device_readings = async (start_date: Date) => {
   });
   return readings;
 };
-
+const line_color = "#555";
 const define_plot_ref = () => {
   return ref<Partial<Plotly.Layout>>({
     paper_bgcolor: "rgba(0,0,0,0)",
@@ -57,20 +57,25 @@ const define_plot_ref = () => {
       color: "#fff",
     },
     legend: {
-      x: 1.1,
-      xanchor: "left",
-      y: 1,
+      x: 1.0,
+      xanchor: "right",
+      y: 1.0,
+    },
+    xaxis: {
+      gridcolor: line_color,
     },
     yaxis: {
       title: {
         text: "Temperature [°C]",
       },
+      gridcolor: line_color,
     },
     yaxis2: {
       title: {
         text: "Humidity [%]",
       },
       overlaying: "y",
+      gridcolor: line_color,
       side: "right",
     },
   });

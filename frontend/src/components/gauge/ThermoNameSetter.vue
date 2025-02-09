@@ -22,10 +22,10 @@
   <v-row v-else>
     <v-col class="my-2 text-h4" cols="9"
       >{{
-        device.device_name.nickname ? device.device_name.nickname : "no name"
+        device?.device_name.nickname ? device.device_name.nickname : "no name"
       }}
     </v-col>
-    <v-col class="text-h5 mx-2" cols="2">
+    <v-col class="text-h5" cols="2">
       <v-btn
         variant="plain"
         size="x-large"
