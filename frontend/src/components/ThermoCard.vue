@@ -10,9 +10,11 @@
             <v-icon class="me-1 pb-1" icon="mdi-update" size="18"></v-icon>
             updated:
             {{
-              (Date.now() -
-                new Date((device as Reading).time_stamp).getTime()) /
-              1000
+              Math.floor(
+                (Date.now() -
+                  new Date((device as Reading).time_stamp).getTime()) /
+                  1000
+              )
             }}
             s ago.
           </template>

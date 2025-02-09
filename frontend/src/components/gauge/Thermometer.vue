@@ -45,10 +45,10 @@ $TM-mainTint: #3d3d44;
 $TM-backgroundColor: darken($TM-mainTint, 0%);
 $TM-borderSize: 5px;
 $TM-borderColor: darken($TM-mainTint, 8%);
-$TM-width: 30px;
-$TM-height: 140px;
+$TM-width: 50px;
+$TM-height: 180px;
 $TM-bulbSize: $TM-width * 1.75;
-$TM-radius: 20px;
+$TM-radius: 50px;
 $TM-graduationsStyle: 2px solid rgba(0, 0, 0, 0.5);
 $TM-bulbColor: v-bind(color_bulb);
 $TM-mercuryColor: linear-gradient(v-bind(color_top), $TM-bulbColor) no-repeat
@@ -98,7 +98,7 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
     width: $TM-bulbSize;
     height: $TM-bulbSize;
     background-color: $TM-bulbColor;
-    bottom: -$TM-bulbSize + 2 * $TM-borderSize;
+    bottom: -$TM-bulbSize + 5 * $TM-borderSize;
     @include border;
     z-index: -3;
     left: 50%;

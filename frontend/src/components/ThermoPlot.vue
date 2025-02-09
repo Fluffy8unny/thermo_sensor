@@ -1,34 +1,36 @@
 <template>
   <v-card class="my-2">
     <v-card-item
-      class="text-h4"
+      class="text-h5"
       title="Recent readings"
-      prepend-icon="mdi-chart-line"
+      prepend-icon="mdi-chart-bar"
     >
     </v-card-item>
-    <v-row>
-      <v-col>
-        <VuePlotly ref="plot_temp" :data="data_temp" :layout="layout_temp" />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col class="d-flex justify-center my-2">
-        <ModeSelection @click="update_plot" ref="mode_ref" class="mx-2" />
-        <TimeSelection
-          @click="update_plot"
-          ref="date_ref"
-          class="mx-2"
-          @redraw="update_plot"
-        />
-        <v-btn-toggle
-          color="divided"
-          v-model="impossible_ref"
-          variant="outlined"
-        >
-          <v-btn size="large" icon="mdi-refresh" @click="update_plot"></v-btn>
-        </v-btn-toggle>
-      </v-col>
-    </v-row>
+    <v-card-text>
+      <v-row>
+        <v-col>
+          <VuePlotly ref="plot_temp" :data="data_temp" :layout="layout_temp" />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col class="d-flex justify-center">
+          <ModeSelection @click="update_plot" ref="mode_ref" class="mx-2" />
+          <TimeSelection
+            @click="update_plot"
+            ref="date_ref"
+            class="mx-2"
+            @redraw="update_plot"
+          />
+          <v-btn-toggle
+            color="divided"
+            v-model="impossible_ref"
+            variant="outlined"
+          >
+            <v-btn size="large" icon="mdi-refresh" @click="update_plot"></v-btn>
+          </v-btn-toggle>
+        </v-col>
+      </v-row>
+    </v-card-text>
   </v-card>
 </template>
 <script lang="ts">
@@ -71,8 +73,8 @@ const define_plot_ref = () => {
       pad: 4,
     },
     legend: {
-      x: 1.0,
-      xanchor: "right",
+      x: 1.05,
+      xanchor: "left",
       y: 1.0,
     },
     xaxis: {
@@ -154,7 +156,7 @@ export default defineComponent({
             y: y_coordinates,
             type: "scatter",
             mode: "lines",
-            name: `${name} ${name_suffix}`,
+            name: `${name}`,
             line: {
               color: plot_colors[ctr],
               dash: type === "HUMIDITY" ? "dot" : "solid",
