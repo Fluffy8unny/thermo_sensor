@@ -12,8 +12,13 @@
       }}
       s ago
     </h2>
-    <Thermometer :value="device.temperature / 10" :settings="therm_settings" />
-    <Thermometer :value="device.humidity" :settings="humidity_settings" />
+    <div :style="{ display: 'flex', justifyContent: 'space-around' }">
+      <Thermometer
+        :value="device.temperature / 10"
+        :settings="therm_settings"
+      />
+      <Thermometer :value="device.humidity" :settings="humidity_settings" />
+    </div>
   </div>
 </template>
 

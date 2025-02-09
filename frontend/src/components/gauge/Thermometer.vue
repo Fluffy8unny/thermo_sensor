@@ -1,11 +1,13 @@
 <template>
-  <div id="termometer">
-    <div
-      id="temperature"
-      v-bind:style="{ height: temp_height }"
-      :data-value="temp_reading"
-    ></div>
-    <div id="graduations"></div>
+  <div id="wrapper">
+    <div id="termometer">
+      <div
+        id="temperature"
+        v-bind:style="{ height: temp_height }"
+        :data-value="temp_reading"
+      ></div>
+      <div id="graduations"></div>
+    </div>
   </div>
 </template>
 
@@ -21,14 +23,17 @@ export default defineComponent({
   setup(props, ctx) {
     const min_temp: number = props.settings?.min_val || (0 as number);
     const max_temp: number = props.settings?.max_val || (1 as number);
+
     const temp_reading: string = props.value
       ? `${props.value}${props.settings?.unit || "°C"}`
       : "No data";
     const temp_height: string = props.value
       ? `${(100 * (props.value - min_temp)) / (max_temp - min_temp)}%`
       : "0%";
+
     const color_bulb = props.settings?.color_bulb || "#2affd8";
     const color_top = props.settings?.color_top || "#ff0000";
+
     return { temp_reading, temp_height, color_bulb, color_top };
   },
 });
@@ -38,9 +43,9 @@ export default defineComponent({
 // VARIABLES
 $TM-mainTint: #3d3d44;
 $TM-backgroundColor: darken($TM-mainTint, 0%);
-$TM-borderSize: 9px;
+$TM-borderSize: 5px;
 $TM-borderColor: darken($TM-mainTint, 8%);
-$TM-width: 25px;
+$TM-width: 15px;
 $TM-height: 140px;
 $TM-bulbSize: $TM-width * 2;
 $TM-radius: 20px;
@@ -51,7 +56,7 @@ $TM-mercuryColor: linear-gradient(v-bind(color_top), $TM-bulbColor) no-repeat
 
 // Tooltip
 $TM-tooltipColor: $TM-mainTint;
-$TM-tooltipSize: 1em;
+$TM-tooltipSize: 1.5em;
 $TM-tooltipRadius: 5px;
 $TM-tooltipTopShift: 5px;
 $TM-tooltipVerticalPadding: 5px;
@@ -62,6 +67,13 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
 
 @mixin border() {
   border: $TM-borderSize solid $TM-borderColor;
+}
+
+#wrapper {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #termometer {
@@ -132,13 +144,13 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
       background: $TM-tooltipColor;
       color: white;
       z-index: 2;
-      width: 4em;
+      width: 3em;
       padding: $TM-tooltipVerticalPadding $TM-tooltipHorizontalPadding;
       border-radius: $TM-tooltipRadius;
       font-size: $TM-tooltipSize;
       line-height: 1;
       transform: translateY(50%);
-      left: calc(#{$TM-tooltipLeftShift} + 1em / #{$TM-tooltipArrowWidth});
+      left: calc(#{$TM-tooltipLeftShift} + 0.75em / #{$TM-tooltipArrowWidth});
       top: calc(
         -1em + #{$TM-tooltipTopShift} - #{$TM-tooltipVerticalPadding} * 2
       );

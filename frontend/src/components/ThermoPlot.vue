@@ -1,5 +1,8 @@
 <template>
-  <TimeSelection ref="date_ref" />
+  <div>
+    <TimeSelection ref="date_ref" />
+    <button @click="update_plot">refersh</button>
+  </div>
   <div class="wide">
     <VuePlotly ref="plot_temp" :data="data_temp" :layout="layout_temp" />
   </div>
@@ -100,7 +103,7 @@ export default defineComponent({
             name: `${name} ${name_suffix}`,
             line: {
               color: plot_colors[ctr],
-              dash: type === "HUMIDITY" ? "dash" : "solid",
+              dash: type === "HUMIDITY" ? "dot" : "solid",
             },
             yaxis: axis,
           };
@@ -118,9 +121,6 @@ export default defineComponent({
 
     onMounted(async () => {
       update_plot();
-      const { pause, resume, isActive } = useIntervalFn(async () => {
-        update_plot();
-      }, 10000);
     });
 
     return {
@@ -129,6 +129,7 @@ export default defineComponent({
       layout_temp,
       plot_temp,
       date_ref: ref_to_time_selector,
+      update_plot,
     };
   },
 });
