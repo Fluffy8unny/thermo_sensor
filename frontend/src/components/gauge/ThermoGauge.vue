@@ -1,31 +1,12 @@
 <template>
-  <div>
-    <h1 v-if="device.device_name.nickname !== null">
-      {{ device.device_name.nickname }}
-    </h1>
-    <h1 v-else>no description</h1>
-    <h2>{{ device.device_name.name }}</h2>
-    <h2>
-      last update:
-      {{
-        (Date.now() - new Date((device as Reading).time_stamp).getTime()) / 1000
-      }}
-      s ago
-    </h2>
-    <div :style="{ display: 'flex', justifyContent: 'space-around' }">
-      <Thermometer
-        :value="device.temperature / 10"
-        :settings="therm_settings"
-      />
-      <Thermometer :value="device.humidity" :settings="humidity_settings" />
-    </div>
-  </div>
+  <Thermometer :value="device.temperature / 10" :settings="therm_settings" />
+  <Thermometer :value="device.humidity" :settings="humidity_settings" />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Reading } from "../interfaces/device.interface";
-import ThermometerDisplay from "./gauge/Thermometer.vue";
+import ThermometerDisplay from "./Thermometer.vue";
 
 export default defineComponent({
   name: "ThermoGauge",

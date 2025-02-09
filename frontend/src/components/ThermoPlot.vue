@@ -1,16 +1,33 @@
 <template>
-  <div>
-    <TimeSelection ref="date_ref" />
-    <button @click="update_plot">refersh</button>
-  </div>
-  <div class="wide">
-    <VuePlotly ref="plot_temp" :data="data_temp" :layout="layout_temp" />
-  </div>
+  <v-container>
+    <v-row>
+      <v-col>
+        <VuePlotly ref="plot_temp" :data="data_temp" :layout="layout_temp" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="d-flex justify-center">
+        <ModeSelection @click="update_plot" ref="mode_ref" class="mx-2" />
+        <TimeSelection
+          @click="update_plot"
+          ref="date_ref"
+          class="mx-2"
+          @redraw="update_plot"
+        />
+        <v-btn
+          variant="plain"
+          size="large"
+          icon="mdi-refresh"
+          @click="update_plot"
+        ></v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
-
 <script lang="ts">
-import { defineComponent, ref, Ref, onMounted, h } from "vue";
+import { defineComponent, ref, Ref, onMounted, watch } from "vue";
 import TimeSelection from "./plot/TimeSelection.vue";
+import ModeSelection from "./plot/ModeSelection.vue";
 import ThermoService from "../services/thermo.service";
 import { Plot, Reading } from "../interfaces/device.interface";
 
@@ -31,7 +48,19 @@ const get_device_readings = async (start_date: Date) => {
 
 const define_plot_ref = () => {
   return ref<Partial<Plotly.Layout>>({
-    title: { text: "Temperature and Humidity" },
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+    height: 650,
+    font: {
+      family: "Courier New, monospace",
+      size: 14,
+      color: "#fff",
+    },
+    legend: {
+      x: 1.1,
+      xanchor: "left",
+      y: 1,
+    },
     yaxis: {
       title: {
         text: "Temperature [°C]",
@@ -61,11 +90,17 @@ const plot_colors = [
 ];
 
 export default defineComponent({
-  components: { VuePlotly: VuePlotly, TimeSelection: TimeSelection },
+  components: {
+    VuePlotly: VuePlotly,
+    TimeSelection: TimeSelection,
+    ModeSelection: ModeSelection,
+  },
   name: "ThermoPlot",
   props: {},
   setup(props, ctx) {
     const ref_to_time_selector = ref();
+    const ref_to_mode_selector = ref();
+
     const plot_temp = ref<typeof VuePlotly>();
 
     const layout_temp = define_plot_ref();
@@ -109,12 +144,14 @@ export default defineComponent({
           };
         };
 
-        data_temp.value.push(
-          generate_data(temperature_readings, reading.name, "TEMP")
-        );
-        data_temp.value.push(
-          generate_data(humidity_readings, reading.name, "HUMIDITY")
-        );
+        ref_to_mode_selector.value.plot_ref.includes("TEMP") &&
+          data_temp.value.push(
+            generate_data(temperature_readings, reading.name, "TEMP")
+          );
+        ref_to_mode_selector.value.plot_ref.includes("HUMIDITY") &&
+          data_temp.value.push(
+            generate_data(humidity_readings, reading.name, "HUMIDITY")
+          );
         ctr = ++ctr % plot_colors.length;
       }
     };
@@ -129,6 +166,7 @@ export default defineComponent({
       layout_temp,
       plot_temp,
       date_ref: ref_to_time_selector,
+      mode_ref: ref_to_mode_selector,
       update_plot,
     };
   },
