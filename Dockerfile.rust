@@ -18,3 +18,11 @@ RUN cargo build --release
 COPY config.toml config.toml
 RUN echo ls
 #TODO RUNNER STAGE WITH ALL DEPENDENCIES USING CARGO FOR NOW
+
+FROM debian:bookworm-slim AS runner
+RUN apt-get update -y && \
+  apt-get install -y libdbus-1-dev sqlite3 libsqlite3-dev 
+#COPY --from=builder  /app/target/release .
+COPY --from=builder  /app/target/release/bt_data .
+COPY --from=builder  /app/target/release/backend .
+COPY config.toml .
