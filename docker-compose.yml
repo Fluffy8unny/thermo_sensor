@@ -1,0 +1,33 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    image: thermoSensorTS/latest
+    command: "npm run serve --dev"
+    ports:
+       - "8080:8080" 
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.rust
+    image: thermoSensorRS/latest
+    command: "cargo run --release --bin backend"
+    volumes:
+      - ./db:/app/db
+    ports:
+       - "8081:8081" #later we can link it internally need it for debugging right now
+
+  bt_probe:
+    build:
+      context: .
+      dockerfile: Dockerfile.rust
+    image: thermoSensorRS/latest
+    privileged: true 
+    volumes:
+      - /var/run/dbus/:/var/run/dbus/:z 
+      - ./db:/app/db
+    command: "cargo run --release --bin bt_data"
+

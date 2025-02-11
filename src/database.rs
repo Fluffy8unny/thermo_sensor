@@ -144,6 +144,7 @@ async fn receive_data(
     config: config::DatabaseConfig,
     mut rx: mpsc::UnboundedReceiver<Reading>,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    
     let conn = Connection::open(config.file_name)?;
     assert_table(&conn)?;
 
