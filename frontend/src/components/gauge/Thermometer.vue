@@ -14,6 +14,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { ThermometerSettings } from "@/interfaces/device.interface";
+import { useTheme } from "vuetify";
+
 export default defineComponent({
   name: "ThermometerDisplay",
   props: {
@@ -30,21 +32,33 @@ export default defineComponent({
     const temp_height: string = props.value
       ? `${(100 * (props.value - min_temp)) / (max_temp - min_temp)}%`
       : "0%";
+    const vTheme = useTheme();
+    const color_border = vTheme.current.value.colors.background;
+    const color_out = vTheme.current.value.colors.surface;
+    const color_font = vTheme.current.value.colors["on-background"];
 
     const color_bulb = props.settings?.color_bulb || "#2affd8";
     const color_top = props.settings?.color_top || "#ff0000";
 
-    return { temp_reading, temp_height, color_bulb, color_top };
+    return {
+      temp_reading,
+      temp_height,
+      color_bulb,
+      color_top,
+      color_out,
+      color_border,
+      color_font,
+    };
   },
 });
 </script>
 
 <style scoped lang="scss">
 // VARIABLES
-$TM-mainTint: #3d3d44;
-$TM-backgroundColor: darken($TM-mainTint, 0%);
-$TM-borderSize: 5px;
-$TM-borderColor: darken($TM-mainTint, 8%);
+$TM-mainTint: v-bind(color_out);
+$TM-backgroundColor: v-bind(color_out);
+$TM-borderSize: 10px;
+$TM-borderColor: v-bind(color_border);
 $TM-width: 50px;
 $TM-height: 180px;
 $TM-bulbSize: $TM-width * 1.75;
@@ -98,7 +112,7 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
     width: $TM-bulbSize;
     height: $TM-bulbSize;
     background-color: $TM-bulbColor;
-    bottom: -$TM-bulbSize + 5 * $TM-borderSize;
+    bottom: -$TM-bulbSize + 2 * $TM-borderSize;
     @include border;
     z-index: -3;
     left: 50%;
@@ -142,12 +156,12 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
     &:before {
       content: attr(data-value);
       background: $TM-tooltipColor;
-      color: white;
+      color: v-bind(color_font);
       z-index: 2;
-      width: 4em;
+      width: $TM-tooltipSize * 4;
       padding: $TM-tooltipVerticalPadding $TM-tooltipHorizontalPadding;
       border-radius: $TM-tooltipRadius;
-      font-size: $TM-tooltipSize;
+      font-size: $TM-tooltipSize * 2;
       line-height: 1;
       transform: translateY(50%);
       left: calc(#{$TM-tooltipLeftShift} + 0.75em / #{$TM-tooltipArrowWidth});

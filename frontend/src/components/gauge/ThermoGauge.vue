@@ -16,7 +16,7 @@ export default defineComponent({
   },
   setup(props, ctx) {
     const therm_settings = {
-      min_val: 15,
+      min_val: 10,
       max_val: 35,
       unit: "°C",
       color_bulb: "#32de84",

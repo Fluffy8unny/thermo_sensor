@@ -2,8 +2,9 @@
   <v-card class="my-2">
     <v-card-item
       class="text-h5"
-      title="Recent readings"
+      title="Recent Readings"
       prepend-icon="mdi-chart-bar"
+      elevation="10"
     >
     </v-card-item>
     <v-card-text>
@@ -34,7 +35,7 @@
   </v-card>
 </template>
 <script lang="ts">
-import { defineComponent, ref, Ref, onMounted, watch } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import TimeSelection from "./plot/TimeSelection.vue";
 import ModeSelection from "./plot/ModeSelection.vue";
 import ThermoService from "../services/thermo.service";
@@ -42,7 +43,6 @@ import { Plot, Reading } from "../interfaces/device.interface";
 
 import Plotly from "plotly.js";
 import VuePlotly from "vue3-plotly-ts";
-import { useIntervalFn } from "@vueuse/core";
 
 const get_device_readings = async (start_date: Date) => {
   const device_result = await ThermoService.get_devices(start_date);
@@ -55,47 +55,6 @@ const get_device_readings = async (start_date: Date) => {
   return readings;
 };
 const line_color = "#555";
-const define_plot_ref = () => {
-  return ref<Partial<Plotly.Layout>>({
-    paper_bgcolor: "rgba(0,0,0,0)",
-    plot_bgcolor: "rgba(0,0,0,0)",
-    height: 450,
-    font: {
-      family: "Courier New, monospace",
-      size: 14,
-      color: "#fff",
-    },
-    margin: {
-      l: 100,
-      r: 100,
-      b: 80,
-      t: 20,
-      pad: 4,
-    },
-    legend: {
-      x: 1.05,
-      xanchor: "left",
-      y: 1.0,
-    },
-    xaxis: {
-      gridcolor: line_color,
-    },
-    yaxis: {
-      title: {
-        text: "Temperature [°C]",
-      },
-      gridcolor: line_color,
-    },
-    yaxis2: {
-      title: {
-        text: "Humidity [%]",
-      },
-      overlaying: "y",
-      gridcolor: line_color,
-      side: "right",
-    },
-  });
-};
 
 const plot_colors = [
   "#1f77b4", // muted blue
@@ -119,12 +78,55 @@ export default defineComponent({
   name: "ThermoPlot",
   props: {},
   setup(props, ctx) {
+    console.log();
+    const define_plot = () => {
+      return ref<Partial<Plotly.Layout>>({
+        paper_bgcolor: "rgba(0,0,0,0)",
+        plot_bgcolor: "rgba(0,0,0,0)",
+        height: 450,
+        font: {
+          family: "Courier New, monospace",
+          size: 14,
+          color: "#FFF",
+        },
+        margin: {
+          l: 100,
+          r: 100,
+          b: 80,
+          t: 20,
+          pad: 4,
+        },
+        legend: {
+          x: 1.05,
+          xanchor: "left",
+          y: 1.0,
+        },
+        xaxis: {
+          gridcolor: line_color,
+        },
+        yaxis: {
+          title: {
+            text: "Temperature [°C]",
+          },
+          gridcolor: line_color,
+        },
+        yaxis2: {
+          title: {
+            text: "Humidity [%]",
+          },
+          overlaying: "y",
+          gridcolor: line_color,
+          side: "right",
+        },
+      });
+    };
+
     const ref_to_time_selector = ref();
     const ref_to_mode_selector = ref();
     const impossible_ref = 27;
     const plot_temp = ref<typeof VuePlotly>();
 
-    const layout_temp = define_plot_ref();
+    const layout_temp = define_plot();
 
     const data_temp = ref<Plotly.Data[]>([]);
     const data_humidity = ref<Plotly.Data[]>([]);
