@@ -21,7 +21,7 @@ RUN echo ls
 #Copy the executeables, install all depenencies needed for running
 FROM debian:bookworm-slim AS runner
 RUN apt-get update -y && \
-  apt-get install -y sqlite3
+  apt-get install -y libdbus-1-dev sqlite3 
 COPY --from=builder  /app/target/release/bt_data .
 COPY --from=builder  /app/target/release/backend .
 COPY config.toml .
