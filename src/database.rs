@@ -57,6 +57,7 @@ pub fn update_nickname(
     device_nickname: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let conn = Connection::open(config.file_name)?;
+    assert_table(&conn)?;
     conn.execute(
         "update devices 
                        set nickname =?1
@@ -89,6 +90,7 @@ pub fn get_all_devices(
     time_limit: DateTime<Utc>,
 ) -> Result<Vec<DeviceName>, Box<dyn std::error::Error>> {
     let conn = Connection::open(config.file_name)?;
+    assert_table(&conn)?;
     let time_string = convert_date_time(time_limit);
     let mut stmt = conn.prepare(
         "select distinct d.name,d.nickname
@@ -117,6 +119,7 @@ pub fn get_all_readings_for_device(
     time_limit: DateTime<Utc>,
 ) -> Result<Vec<Reading>, Box<dyn std::error::Error>> {
     let conn = Connection::open(config.file_name)?;
+    assert_table(&conn)?;
     let time_string = convert_date_time(time_limit);
     let mut stmt = conn.prepare("select  r.time_stamp,d.name, d.nickname,r.temperature,r.humidity 
                                                      from  readings r inner join devices d on r.device_id = d.id
@@ -130,6 +133,7 @@ pub fn get_newest_readings(
     time_limit: DateTime<Utc>,
 ) -> Result<Vec<Reading>, Box<dyn std::error::Error>> {
     let conn = Connection::open(config.file_name)?;
+    assert_table(&conn)?;
     let time_string = convert_date_time(time_limit);
     let mut stmt =
         conn.prepare("select  r.time_stamp,d.name, d.nickname,r.temperature,r.humidity, max(time_stamp) as latest
