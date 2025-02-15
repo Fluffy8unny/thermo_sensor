@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Reading, Device } from "@/interfaces/device.interface";
 
-const backend_url = "http://localhost:8081";
+const backend_url = "http://192.168.179.8:8081";
 
 const convert_date = (date: Date): string => date.toISOString();
 
