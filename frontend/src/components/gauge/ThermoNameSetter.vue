@@ -20,7 +20,10 @@
     ></v-btn>
   </v-row>
   <v-row v-else>
-    <v-col class="my-4 text-h4" cols="9"
+    <v-col
+      class="my-4 text-h4"
+      style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap"
+      cols="9"
       >{{
         device?.device_name.nickname ? device.device_name.nickname : "no name"
       }}

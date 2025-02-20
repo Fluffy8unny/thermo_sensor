@@ -62,7 +62,7 @@ $TM-borderColor: v-bind(color_border);
 $TM-width: 50px;
 $TM-height: 180px;
 $TM-bulbSize: $TM-width * 1.75;
-$TM-radius: 50px;
+$TM-radius: $TM-height/4.0;
 $TM-graduationsStyle: 2px solid rgba(0, 0, 0, 0.5);
 $TM-bulbColor: v-bind(color_bulb);
 $TM-mercuryColor: linear-gradient(v-bind(color_top), $TM-bulbColor) no-repeat
@@ -88,6 +88,8 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  left: -5%;
 }
 
 #termometer {
@@ -161,7 +163,7 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
       width: $TM-tooltipSize * 4;
       padding: $TM-tooltipVerticalPadding $TM-tooltipHorizontalPadding;
       border-radius: $TM-tooltipRadius;
-      font-size: $TM-tooltipSize * 2;
+      font-size: 300%;
       line-height: 1;
       transform: translateY(50%);
       left: calc(#{$TM-tooltipLeftShift} + 0.75em / #{$TM-tooltipArrowWidth});

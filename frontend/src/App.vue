@@ -3,7 +3,15 @@
     <v-main>
       <v-container>
         <v-row>
-          <v-col v-for="device in devices" :key="device.device_name.name">
+          <v-col
+            xs="12"
+            sm="12"
+            md="6"
+            xl="6"
+            xxl="3"
+            v-for="device in devices"
+            :key="device.device_name.name"
+          >
             <ThermoCard :device="device" />
           </v-col>
         </v-row>

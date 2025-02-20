@@ -13,6 +13,5 @@
 <script setup lang="ts">
 import { defineExpose, ref } from "vue";
 const plot_ref = ref(["TEMP"]);
-
 defineExpose({ plot_ref: plot_ref });
 </script>
