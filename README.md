@@ -38,7 +38,20 @@ Currently the project is configured for the **ThermoPro TP357S** but it's pretty
 
 ## Installation
 
-You first need to set the envoirement variable backendIP in the docker compose file to the ip of the device that is running the backnend.
+You first need to set the envoirement variable BACKEND_IP and BACKEND_PORT in the docker compose file to the ip and port of the device, that is running the backnend:
+```yaml
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+      args:
+        BACKEND_IP: "192.168.179.8" #HERE
+        BACKEND_PORT: 8081          #HERE
+    image: thermoSensorTS/latest
+```
+
+This is needed, so the frontend can acess the backend.
 The whole project is dockerized. Since we are using the host's bluetooth, we need a priviledged container. To run it simply use
 
 ```shell
