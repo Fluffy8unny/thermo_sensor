@@ -2,12 +2,13 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-row>
+        <v-row cols="12">
           <v-col
-            xs="12"
+            cols="12"
             sm="12"
             md="6"
-            xl="6"
+            lg="6"
+            xl="3"
             xxl="3"
             v-for="device in devices"
             :key="device.device_name.name"
@@ -39,6 +40,7 @@ export default defineComponent({
   },
   setup(props, ctx) {
     const devices = ref<Reading[]>([]);
+    console.log(process.env);
     const { pause, resume, isActive } = useIntervalFn(async () => {
       let default_date = new Date();
       default_date.setDate(default_date.getDate() - 7);

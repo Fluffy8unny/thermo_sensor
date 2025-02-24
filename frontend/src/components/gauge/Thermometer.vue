@@ -57,11 +57,12 @@ export default defineComponent({
 // VARIABLES
 $TM-mainTint: v-bind(color_out);
 $TM-backgroundColor: v-bind(color_out);
-$TM-borderSize: 10px;
 $TM-borderColor: v-bind(color_border);
-$TM-width: 50px;
-$TM-height: 180px;
+$TM-height: 7vh;
+$TM-width: 2vh;
 $TM-bulbSize: $TM-width * 1.75;
+$TM-borderSize: $TM-bulbSize * 0.1;
+
 $TM-radius: $TM-height/4.0;
 $TM-graduationsStyle: 2px solid rgba(0, 0, 0, 0.5);
 $TM-bulbColor: v-bind(color_bulb);
@@ -70,12 +71,12 @@ $TM-mercuryColor: linear-gradient(v-bind(color_top), $TM-bulbColor) no-repeat
 
 // Tooltip
 $TM-tooltipColor: $TM-mainTint;
-$TM-tooltipSize: 1.5em;
+$TM-tooltipSize: 5vw;
 $TM-tooltipRadius: 5px;
 $TM-tooltipTopShift: 5px;
 $TM-tooltipVerticalPadding: 5px;
 $TM-tooltipHorizontalPadding: $TM-tooltipVerticalPadding * 2;
-$TM-tooltipLeftShift: 100%;
+$TM-tooltipLeftShift: 80%;
 $TM-tooltipArrowWidth: 1.5; // Higher numbers produce smaller width
 $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
 
@@ -90,6 +91,7 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
   align-items: center;
   position: relative;
   left: -5%;
+  height: 12vh;
 }
 
 #termometer {
@@ -114,7 +116,7 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
     width: $TM-bulbSize;
     height: $TM-bulbSize;
     background-color: $TM-bulbColor;
-    bottom: -$TM-bulbSize + 2 * $TM-borderSize;
+    bottom: -$TM-bulbSize * 0.8;
     @include border;
     z-index: -3;
     left: 50%;
@@ -163,7 +165,7 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
       width: $TM-tooltipSize * 4;
       padding: $TM-tooltipVerticalPadding $TM-tooltipHorizontalPadding;
       border-radius: $TM-tooltipRadius;
-      font-size: 300%;
+      font-size: 250%; //min(3vh, 2vw);
       line-height: 1;
       transform: translateY(50%);
       left: calc(#{$TM-tooltipLeftShift} + 0.75em / #{$TM-tooltipArrowWidth});

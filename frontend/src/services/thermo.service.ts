@@ -1,8 +1,11 @@
 import axios from "axios";
 import { Reading, Device } from "@/interfaces/device.interface";
 
-const backend_url = "http://192.168.179.8:8081";
+console.log(process.env);
+const backend_ip = process.env.VUE_APP_BACKEND_IP;
+const backend_port = process.env.VUE_APP_BACKEND_PORT;
 
+const backend_url = `http://${backend_ip}:${backend_port}`;
 const convert_date = (date: Date): string => date.toISOString();
 
 const get_devices = async (start_date: Date): Promise<Device[]> => {

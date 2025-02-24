@@ -3,8 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.node
+      args:
+        BACKEND_IP: "192.168.179.8"
+        BACKEND_PORT: 8081
     image: thermoSensorTS/latest
-    command: "npm run serve --dev"
+    command: "npm run serve"
     ports:
        - "8080:8080" 
     depends_on:
@@ -25,7 +28,7 @@ services:
     volumes:
       - ./db:/db
     ports:
-       - "8081:8081" #later we can link it internally need it for debugging right now
+       - "8081:8081"
 
   bt_probe:
     build:
