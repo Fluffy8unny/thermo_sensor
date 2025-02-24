@@ -6,31 +6,48 @@
 
 Just a small collection of programs that does the following:
 
+```mermaid
+flowchart TD
+    A[Probe] -->|Write to DB| B[Backend] <-->|Query DB/Change Settings| C[Frontend]
+    
+    A-->|Subscribe| T{Thermo1}
+    A-->|Subscribe| U{Thermo2}
+    A-->|Subscribe| V{ThermoN}
+
+    T -->|Publish| A
+    U -->|Publish| A
+    V -->|Publish| A
+```
+
 - **Probe**:
   
-  - Look for Bluetooth thermometer devices, that follow certain specifications (c.f. configuring your device)
+  - Look for Bluetooth thermometer devices, that follow certain specifications. The specifications are if their name contains a certain string, and a service with a certain UUID is provided by them.
   
   - Continiously ping them to get the current termperature and humidity and write them to a SQLite db
 
 - **Backend**:
   
-  - Provide various ways to query the database
+  - Provide various ways to query and add to the database
 
 - **Frontend**:
   
   - Display said data
+  - Set the description of the devices
 
 Currently the project is configured for the **ThermoPro TP357S** but it's pretty easy to add your own device.
 
 ## Installation
 
+You first need to set the envoirement variable backendIP in the docker compose file to the ip of the device that is running the backnend.
 The whole project is dockerized. Since we are using the host's bluetooth, we need a priviledged container. To run it simply use
 
 ```shell
 docker compose up
 ```
 
-This should support all docker compose versions from 2.33 to 3.0
+This should support all docker compose versions from 2.33 to 3.0.
+
+
 
 ## Configuration
 
