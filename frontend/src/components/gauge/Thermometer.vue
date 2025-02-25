@@ -165,7 +165,7 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
       width: $TM-tooltipSize * 4;
       padding: $TM-tooltipVerticalPadding $TM-tooltipHorizontalPadding;
       border-radius: $TM-tooltipRadius;
-      font-size: 250%; //min(3vh, 2vw);
+      font-size: min(3vh, 4vw);
       line-height: 1;
       transform: translateY(50%);
       left: calc(#{$TM-tooltipLeftShift} + 0.75em / #{$TM-tooltipArrowWidth});

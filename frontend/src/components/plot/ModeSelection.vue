@@ -1,5 +1,11 @@
 <template>
-  <v-btn-toggle variant="outlined" v-model="plot_ref" color="primary" multiple>
+  <v-btn-toggle
+    :small="true"
+    variant="outlined"
+    v-model="plot_ref"
+    color="primary"
+    multiple
+  >
     <v-btn value="HUMIDITY">
       <v-icon>mdi-water-percent</v-icon>
     </v-btn>

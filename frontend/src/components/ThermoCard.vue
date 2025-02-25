@@ -1,12 +1,13 @@
 <template>
-  <v-card class="my-4 mx-auto" min-height="200px" variant="elevated">
+  <v-card class="my-4 mx-auto" variant="elevated">
     <v-row align="center" no-gutters>
-      <v-col class="text-h4">
-        <v-card-item
-          :title="device?.device_name.name"
-          prepend-icon="mdi-thermometer"
-          elevation="16"
-        >
+      <v-col>
+        <v-card-item prepend-icon="mdi-thermometer" elevation="16">
+          <template v-slot:title>
+            <p class="text-subtitle-2 text-lg-h6 text-md-subtitle-1">
+              {{ device?.device_name.name }}
+            </p>
+          </template>
           <template v-slot:subtitle>
             <v-icon class="me-1 pb-1" icon="mdi-update" size="18"></v-icon>
             updated:

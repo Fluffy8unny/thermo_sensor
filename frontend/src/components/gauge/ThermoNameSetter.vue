@@ -21,7 +21,7 @@
   </v-row>
   <v-row v-else>
     <v-col
-      class="my-4 text-h4"
+      class="my-4 text-h6 text-lg-h4 text-md-h5"
       style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap"
       cols="9"
       >{{

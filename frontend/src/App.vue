@@ -5,7 +5,7 @@
         <v-row cols="12">
           <v-col
             cols="12"
-            sm="12"
+            sm="6"
             md="6"
             lg="6"
             xl="3"

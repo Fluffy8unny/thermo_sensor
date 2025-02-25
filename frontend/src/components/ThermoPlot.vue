@@ -78,7 +78,6 @@ export default defineComponent({
   name: "ThermoPlot",
   props: {},
   setup(props, ctx) {
-    console.log();
     const define_plot = () => {
       return ref<Partial<Plotly.Layout>>({
         paper_bgcolor: "rgba(0,0,0,0)",
@@ -97,9 +96,11 @@ export default defineComponent({
           pad: 4,
         },
         legend: {
-          x: 1.05,
-          xanchor: "left",
+          x: 0.5,
+          xanchor: "center",
+          yanchor: "bottom",
           y: 1.0,
+          orientation: "h",
         },
         xaxis: {
           gridcolor: line_color,
