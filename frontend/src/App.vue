@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref } from "vue";
 import { useIntervalFn } from "@vueuse/core";
 
 import ThermoCard from "./components/ThermoCard.vue";
@@ -38,10 +38,9 @@ export default defineComponent({
     ThermoCard,
     ThermoPlot,
   },
-  setup(props, ctx) {
+  setup() {
     const devices = ref<Reading[]>([]);
-    console.log(process.env);
-    const { pause, resume, isActive } = useIntervalFn(async () => {
+    useIntervalFn(async () => {
       let default_date = new Date();
       default_date.setDate(default_date.getDate() - 7);
       const devices_result = await ThermoService.get_newest_readings(
@@ -49,6 +48,7 @@ export default defineComponent({
       );
       devices.value = devices_result;
     }, 1000);
+    console.log(devices);
     return { devices };
   },
 });

@@ -1,13 +1,11 @@
 import axios from "axios";
 import { Reading, Device } from "@/interfaces/device.interface";
 
-console.log(process.env);
 const backend_ip = process.env.VUE_APP_BACKEND_IP;
 const backend_port = process.env.VUE_APP_BACKEND_PORT;
 
 const backend_url = `http://${backend_ip}:${backend_port}`;
 //const backend_url = `http://192.168.179.8:8081`;
-
 const convert_date = (date: Date): string => date.toISOString();
 
 const get_devices = async (start_date: Date): Promise<Device[]> => {
@@ -35,7 +33,7 @@ const get_all_readings_for_device = async (
   const response = await axios.get(
     `${backend_url}/device/${device_name.name}/${date_string}`
   );
-  const readings = response.data.map((reading: any) => {
+  const readings = response.data.map((reading: Reading) => {
     return {
       device_name: reading.device_name,
       temperature: reading.temperature,

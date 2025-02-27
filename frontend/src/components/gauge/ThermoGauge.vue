@@ -5,7 +5,6 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { Reading } from "../../interfaces/device.interface";
 import ThermometerDisplay from "./Thermometer.vue";
 
 export default defineComponent({
@@ -14,7 +13,7 @@ export default defineComponent({
   props: {
     device: Object,
   },
-  setup(props, ctx) {
+  setup() {
     const therm_settings = {
       min_val: 10,
       max_val: 35,

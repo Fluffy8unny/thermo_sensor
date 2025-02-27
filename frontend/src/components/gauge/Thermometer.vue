@@ -1,14 +1,15 @@
 <template>
-  <div id="wrapper">
-    <div id="termometer">
-      <div
+  <span id="wrapper">
+    <span id="termometer">
+      <span
         id="temperature"
         v-bind:style="{ height: temp_height }"
         :data-value="temp_reading"
-      ></div>
-      <div id="graduations"></div>
-    </div>
-  </div>
+      ></span>
+      <span id="graduations"></span>
+    </span>
+    <span class="text-h6">{{ temp_unit }}</span>
+  </span>
 </template>
 
 <script lang="ts">
@@ -22,13 +23,13 @@ export default defineComponent({
     value: Number,
     settings: Object as PropType<ThermometerSettings>,
   },
-  setup(props, ctx) {
+  setup(props) {
     const min_temp: number = props.settings?.min_val || (0 as number);
     const max_temp: number = props.settings?.max_val || (1 as number);
 
-    const temp_reading: string = props.value
-      ? `${props.value}${props.settings?.unit || "°C"}`
-      : "No data";
+    const temp_reading = `${props?.value || 0}`;
+    const temp_unit: string = props?.settings?.unit || "";
+
     const temp_height: string = props.value
       ? `${(100 * (props.value - min_temp)) / (max_temp - min_temp)}%`
       : "0%";
@@ -42,6 +43,7 @@ export default defineComponent({
 
     return {
       temp_reading,
+      temp_unit,
       temp_height,
       color_bulb,
       color_top,
@@ -54,6 +56,8 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+@use "sass:math";
+
 // VARIABLES
 $TM-mainTint: v-bind(color_out);
 $TM-backgroundColor: v-bind(color_out);
@@ -63,7 +67,7 @@ $TM-width: 2vh;
 $TM-bulbSize: $TM-width * 1.75;
 $TM-borderSize: $TM-bulbSize * 0.1;
 
-$TM-radius: $TM-height/4.0;
+$TM-radius: math.div($TM-height, 4);
 $TM-graduationsStyle: 2px solid rgba(0, 0, 0, 0.5);
 $TM-bulbColor: v-bind(color_bulb);
 $TM-mercuryColor: linear-gradient(v-bind(color_top), $TM-bulbColor) no-repeat
@@ -91,7 +95,6 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
   align-items: center;
   position: relative;
   left: -5%;
-  height: 12vh;
 }
 
 #termometer {
@@ -159,16 +162,15 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
 
     &:before {
       content: attr(data-value);
-      background: $TM-tooltipColor;
       color: v-bind(color_font);
       z-index: 2;
-      width: $TM-tooltipSize * 4;
+      width: $TM-tooltipSize 4;
       padding: $TM-tooltipVerticalPadding $TM-tooltipHorizontalPadding;
       border-radius: $TM-tooltipRadius;
-      font-size: min(3vh, 4vw);
+      font-size: min(3vh, 3vw);
       line-height: 1;
       transform: translateY(50%);
-      left: calc(#{$TM-tooltipLeftShift} + 0.75em / #{$TM-tooltipArrowWidth});
+      left: calc(#{$TM-tooltipLeftShift} + 0.45em / #{$TM-tooltipArrowWidth});
       top: calc(
         -1em + #{$TM-tooltipTopShift} - #{$TM-tooltipVerticalPadding} * 2
       );
@@ -177,9 +179,11 @@ $TM-tooltipArrowHeight: 2.2; // Higher numbers produce smaller height
     // Tooltip arrow
     &:after {
       content: "";
-      border-top: $TM-tooltipSize / $TM-tooltipArrowHeight solid transparent;
-      border-bottom: $TM-tooltipSize / $TM-tooltipArrowHeight solid transparent;
-      border-right: $TM-tooltipSize / $TM-tooltipArrowWidth solid
+      border-top: calc($TM-tooltipSize / $TM-tooltipArrowHeight) solid
+        transparent;
+      border-bottom: calc($TM-tooltipSize / $TM-tooltipArrowHeight) solid
+        transparent;
+      border-right: calc($TM-tooltipSize / $TM-tooltipArrowWidth) solid
         $TM-tooltipColor;
       left: $TM-tooltipLeftShift;
       top: calc(

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="my-2">
+  <v-card class="my-6">
     <v-card-item
       class="text-h5"
       title="Recent Readings"
@@ -27,7 +27,16 @@
             v-model="impossible_ref"
             variant="outlined"
           >
-            <v-btn size="large" icon="mdi-refresh" @click="update_plot"></v-btn>
+            <v-tooltip text="refresh data" location="top">
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  size="large"
+                  icon="mdi-refresh"
+                  @click="update_plot"
+                  v-bind="props"
+                ></v-btn>
+              </template>
+            </v-tooltip>
           </v-btn-toggle>
         </v-col>
       </v-row>
@@ -77,7 +86,7 @@ export default defineComponent({
   },
   name: "ThermoPlot",
   props: {},
-  setup(props, ctx) {
+  setup() {
     const define_plot = () => {
       return ref<Partial<Plotly.Layout>>({
         paper_bgcolor: "rgba(0,0,0,0)",
@@ -151,8 +160,6 @@ export default defineComponent({
           name: string,
           type: Plot
         ): Plotly.Data => {
-          const name_suffix =
-            type === "TEMP" ? "temperature [°C]" : "humidity [%]";
           const axis = type === "TEMP" ? "y" : "y2";
           return {
             x: timestamps,
