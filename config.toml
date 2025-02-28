@@ -1,8 +1,8 @@
 [bt_config]
 name         = "TP357S"
-service_uuid = "urn:uuid:00010203-0405-0607-0809-0a0b0c0d2b10"
-
+service_uuid    = "urn:uuid:00010203-0405-0607-0809-0a0b0c0d2b10"
+device_selector = "First"
 [db_config]
 file_name    = "db/bt_thermo.db"
 backend_ip   = "0.0.0.0"
-backend_port = 8081
+backend_port = 8081 

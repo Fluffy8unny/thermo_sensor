@@ -11,6 +11,7 @@ use tokio::sync::mpsc;
 
 use crate::config;
 use crate::reading::{Reading, ReadingFn};
+use config::DeviceSelector;
 
 fn check_name(
     peripheral_properties: Option<PeripheralProperties>,
@@ -35,9 +36,48 @@ fn find_characteristic(
     }
     None
 }
+///function to select one adapter from a given list of adapters based on config
+///
+///*`adapter_list` vector of all currentlyt detected adatpers
+///*`selector` DeviceSelector instance, that explains how we should select a device from
+///adapter_list
+///
+///returns an adapter if a valid one was found according to the rules in device_selector, otherwise
+///an error
+async fn select_adapter(
+    adapter_list: Vec<Adapter>,
+    selector: DeviceSelector,
+) -> Result<Adapter, Box<dyn std::error::Error>> {
+    if adapter_list.len() == 0 {
+        return Err("No adapters found")?;
+    }
+    match selector {
+        DeviceSelector::First => Ok(adapter_list[0].clone()),
+        DeviceSelector::NTh { index } => {
+            if adapter_list.len() >= index {
+                Ok(adapter_list[index - 1].clone())
+            } else {
+                Err(format!("provided device index{} out of ranger", index))?
+            }
+        }
+        DeviceSelector::Name { substring } => {
+            for (adp, info) in adapter_list
+                .iter()
+                .map(|adapter| (adapter.clone(), adapter.adapter_info()))
+            {
+                match info.await {
+                    Ok(info) => {
+                        if info.contains(&substring) {
+                            return Ok(adp);
+                        }
+                    }
+                    _ => {}
+                }
+            }
 
-fn select_adapter(adapter_list: Vec<Adapter>) -> Adapter {
-    adapter_list[0].clone()
+            Err(format!("name '{}' not found", substring))?
+        }
+    }
 }
 
 async fn read_device_loop(
@@ -120,10 +160,8 @@ pub async fn start_bluetooth_thread(
 ) -> Result<tokio::task::JoinHandle<()>, Box<dyn std::error::Error>> {
     let manager = Manager::new().await?;
     let adapter_list = manager.adapters().await?;
-    if adapter_list.len() == 0 {
-        return Err("No adapters found.".into());
-    }
-    let adapter = select_adapter(adapter_list);
+
+    let adapter = select_adapter(adapter_list, device_info.device_selector.clone()).await?;
     let _ = adapter.stop_scan().await;
     let task = tokio::spawn(async move {
         let _ = poll_devices(adapter, tx, device_info.clone(), reading_fn).await;

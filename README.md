@@ -75,13 +75,18 @@ If you want to ping the standard device, editing config.toml should be enough. T
   
   - **service_uuid****(string): The service that provides temerature and humidty. If the device offers this service it's valid. We'll subscribe to it, and wait for updates. Each update will be send to the database.
 
+  - **device_selector***: how you want to select the bluetooth adapter:
+      - "First" use the first one
+      - {"NTh"={"index"=1}} use the one at position index, obviously positioning here starts at 1
+      - {"Name"={"substring"="test"}} Use the first adapter, that names contains the provided substring
+
 - **db_config**(Configuration of the backend)
   
   - **file_name****(string): path to the SQLite databser
   
   - **backend_ip** (string): You can limit, who is allowed to poll the infomration in the database, please check the [actix-web documentation ](https://actix.rs/)for more information
     
-    - **backend_port**(int): Port on which the backend is running. <mark>If you change this, you'll need to change the mapping in the docker-compose file als well.</mark>
+  - **backend_port**(int): Port on which the backend is running. <mark>If you change this, you'll need to change the mapping in the docker-compose file als well.</mark>
 
 ### Example configuration
 
